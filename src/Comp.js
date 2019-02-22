@@ -1,5 +1,5 @@
 import React from 'react';
-import './Comp.css'
+import'./Comp.css'
 
 class Comp extends React.Component{
     constructor(props){
@@ -16,17 +16,15 @@ class Comp extends React.Component{
         this.removeComment = this.removeComment.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-
-    arr = [];
     
-    addComment(){
+    arr = [];
 
+    addComment(){
         let userName = this.refs.name.value;
         let userTitle = this.refs.title.value;
         let userPost = this.refs.post.value;
         let form = document.getElementById('inputForm');
         let {arr} = this;
-
         if(userName.length > 0 && userTitle.length > 0 && userPost.length > 0){
             arr.push({
                 name : userName,
@@ -42,7 +40,7 @@ class Comp extends React.Component{
 
     handleChange(event) {
         this.setState({textareaValue : event.target.value});
-      }
+    }
 
     removeComment(index){
         const arr = this.arr;
@@ -59,50 +57,37 @@ class Comp extends React.Component{
     }
 
     editPost(index){
-
         this.setState({
             click : false,
             indexNum : index,
         })
-        
-        let arr = this.arr;
-        let name =  this.refs.name;
-        let title =  this.refs.title;
-        let post =  this.refs.post;
-        let currentIndex = arr[index];
-        
+        const {name,title,post} = this.refs;
+        let currentIndex = this.arr[index];
         name.value = currentIndex.name;
         title.value = currentIndex.title;
         post.value =  this.state.textareaValue;
-
     }
 
     savePost(index){
-        
-        let arr = this.arr;
-        let name =  this.refs.name;
-        let title =  this.refs.title;
-        let post =  this.refs.post;
-        let currentIndex = arr[index];
-
-        if(name.value.length>0 && title.value.length>0 && this.state.textareaValue.length>0){
+        const {name,title,post} = this.refs;
+        let currentIndex = this.arr[index];
+        if(name.value.length>0 && title.value.length>0 && this.state.textareaValue.length>0){  
             currentIndex.name = name.value;
             currentIndex.title = title.value;
             currentIndex.post = this.state.textareaValue;
-            this.setState({click : true})
             name.value = '';
             title.value = '';
             post.value = '';
+            this.setState({click : true})
         }
-
     }
 
     render(){
-        const {arr} = this;
+        const {arr,handleChange,addComment} = this;
         const {click,indexNum} = this.state;
         return(
             <div className='parent'>
-                <form id = "inputForm">
+               <form id = "inputForm">
                     < input 
                         type = "text" 
                         ref='name'
@@ -118,16 +103,15 @@ class Comp extends React.Component{
                         ref='post' 
                         placeholder="Enter post"
                         value = {this.setState.value}
-                        onChange={this.handleChange}
+                        onChange={handleChange}
                     />
-                    <input 
+                    {click && <input 
                         type="button" 
                         value="Add comment" 
-                        onClick = {(this.addComment)}
+                        onClick = {addComment}
                         className='button'
-                    />
+                    />}
                 </form>
-                
                 {arr.map((elem,index)=>(
                     <div 
                     className='list'
@@ -148,11 +132,17 @@ class Comp extends React.Component{
                             onClick={()=>{this.removeComment(index)}}
                         >
                             Delete comment
-                        </button>
-                        {click && <button onClick={()=>this.editPost(index)}> 
+                        </button >
+                        {click && <button 
+                            className='list-button'
+                            onClick={()=>this.editPost(index)}
+                        > 
                             Edit comment
                         </button>}
-                        {!click && index===indexNum && <button onClick={()=>this.savePost(index)}> 
+                        {!click && index===indexNum && <button
+                            onClick={()=>this.savePost(index)}
+                            className='list-button'
+                         > 
                             Save
                         </button>}
                     </div>

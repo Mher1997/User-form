@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Padauk');
 *{
     font-size: 20px;
+    font-family: 'Padauk', sans-serif;
 }
 body {
     background-color: #8D9440 !important;
