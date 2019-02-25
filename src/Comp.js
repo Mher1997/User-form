@@ -1,5 +1,7 @@
 import React from 'react';
-import'./Comp.css'
+import './Comp.css'
+import {InputName, InputTitle,TextArea,AddComment} from './Components/Inputs';
+import {CommentLists} from './Components/CommentLists';
 
 class Comp extends React.Component{
     constructor(props){
@@ -7,39 +9,87 @@ class Comp extends React.Component{
         this.state = {
             arr : [{}],
             click : true,
-            textareaValue : '',
             indexNum : 0
         }
         this.addComment = this.addComment.bind(this);
-        this.editPost = this.editPost.bind(this);
-        this.addState = this.addState.bind(this);
+        this.editComment = this.editComment.bind(this);
         this.removeComment = this.removeComment.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.saveComment = this.saveComment.bind(this);
+        this.changeInput = this.changeInput.bind(this);
+        this.addState = this.addState.bind(this);
+        this.inputName = React.createRef();
+        this.inputTitle = React.createRef();
+        this.textArea = React.createRef();
+        this.formRef = React.createRef();
+    }
+
+    arr = [];
+    inputValues = {
+      name : '',
+      title : '',
+      comment : ''
+    }
+
+    changeInput(){
+      this.inputValues.name = this.inputName.current.value;
+      this.inputValues.title = this.inputTitle.current.value;
+      this.inputValues.comment = this.textArea.current.value;
     }
     
-    arr = [];
-
     addComment(){
-        let userName = this.refs.name.value;
-        let userTitle = this.refs.title.value;
-        let userPost = this.refs.post.value;
-        let form = document.getElementById('inputForm');
+        
+        let {name,title,comment} = this.inputValues;
         let {arr} = this;
-        if(userName.length > 0 && userTitle.length > 0 && userPost.length > 0){
+        
+        if(name.length > 0 && title.length > 0 && comment.length > 0){
             arr.push({
-                name : userName,
-                title : userTitle,
-                post : userPost,
+                name,
+                title,
+                comment,
             })
-            this.setState({
-                arr,
-            })
-            form.reset();
+            this.setState({arr})
+            this.formRef.current.reset();
         } 
     }
 
-    handleChange(event) {
-        this.setState({textareaValue : event.target.value});
+    editComment(index){
+
+        this.setState({
+            click : false,
+            indexNum : index,
+        })
+        
+        let name =  this.inputName.current;
+        let title = this.inputTitle.current;
+        let comment =  this.textArea.current;
+        let currentIndex = this.arr[index];
+        
+        name.value = currentIndex.name;
+        title.value = currentIndex.title;
+        comment.value =  currentIndex.comment;
+
+    }
+
+    saveComment(index){
+        
+        let name =  this.inputName.current;
+        let title = this.inputTitle.current;
+        let comment =  this.textArea.current;
+        let currentIndex = this.arr[index];
+
+        if(name.value.length>0 && title.value.length>0 && comment.value.length>0){
+            
+            currentIndex.name = name.value;
+            currentIndex.title = title.value;
+            currentIndex.comment = comment.value;
+        
+            name.value = '';
+            title.value = '';
+            comment.value = '';
+
+            this.setState({click : true})
+        }
+
     }
 
     removeComment(index){
@@ -56,96 +106,38 @@ class Comp extends React.Component{
         })
     }
 
-    editPost(index){
-        this.setState({
-            click : false,
-            indexNum : index,
-        })
-        const {name,title,post} = this.refs;
-        let currentIndex = this.arr[index];
-        name.value = currentIndex.name;
-        title.value = currentIndex.title;
-        post.value =  this.state.textareaValue;
-    }
-
-    savePost(index){
-        const {name,title,post} = this.refs;
-        let currentIndex = this.arr[index];
-        if(name.value.length>0 && title.value.length>0 && this.state.textareaValue.length>0){  
-            currentIndex.name = name.value;
-            currentIndex.title = title.value;
-            currentIndex.post = this.state.textareaValue;
-            name.value = '';
-            title.value = '';
-            post.value = '';
-            this.setState({click : true})
-        }
-    }
-
+    
     render(){
-        const {arr,handleChange,addComment} = this;
+        const {arr,inputName,inputTitle,changeInput,textArea,addComment,removeComment,editComment,saveComment,formRef} = this;
         const {click,indexNum} = this.state;
         return(
             <div className='parent'>
-               <form id = "inputForm">
-                    < input 
-                        type = "text" 
-                        ref='name'
-                        placeholder="Enter your name"
+               <form id = "inputForm" ref={formRef}>
+                    < InputName
+                        inputName={inputName}
+                        changeInput={changeInput}
                     />
-                    <input 
-                        type = "text" 
-                        ref='title' 
-                        placeholder="Enter post title"
+                    < InputTitle 
+                        inputTitle={inputTitle}
+                        changeInput={changeInput}
                     />
-                    <textarea 
-                        type = "text" 
-                        ref='post' 
-                        placeholder="Enter post"
-                        value = {this.setState.value}
-                        onChange={handleChange}
+                    <TextArea
+                        textArea={textArea}
+                        changeInput={changeInput}
                     />
-                    {click && <input 
-                        type="button" 
-                        value="Add comment" 
-                        onClick = {addComment}
-                        className='button'
-                    />}
+                    {click && <AddComment addComment={addComment}/>}
                 </form>
+                
                 {arr.map((elem,index)=>(
-                    <div 
-                    className='list'
-                    >
-                        <ul>
-                            <li>
-                                <span>Name : </span>{elem.name} <br/>
-                            </li>
-                            <li>
-                                <span>Title :</span> {elem.title} <br/>
-                            </li>
-                            <li>
-                                <span>Comment :</span> {elem.post} <br/>
-                            </li>
-                        </ul>
-                        <button 
-                            className='list-button'
-                            onClick={()=>{this.removeComment(index)}}
-                        >
-                            Delete comment
-                        </button >
-                        {click && <button 
-                            className='list-button'
-                            onClick={()=>this.editPost(index)}
-                        > 
-                            Edit comment
-                        </button>}
-                        {!click && index===indexNum && <button
-                            onClick={()=>this.savePost(index)}
-                            className='list-button'
-                         > 
-                            Save
-                        </button>}
-                    </div>
+                    <CommentLists 
+                        elem={elem} 
+                        index={index} 
+                        removeComment={removeComment} 
+                        editComment={editComment} 
+                        saveComment={saveComment} 
+                        click={click} 
+                        indexNum={indexNum}
+                    />
                 ))}
             </div>
         )

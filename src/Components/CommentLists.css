@@ -1,0 +1,29 @@
+.list{
+    margin: 40px 200px;
+    width: 500px;
+    margin: auto;
+}
+
+.list-button{
+    width: 26%;
+    border-radius: 8px;
+    box-shadow: 0 0 5px 1px black;
+    outline-style: none;
+    background-color: #616247;
+    border: 1px solid #616247;
+    color: white;
+    font-size: 16px;
+    margin: 5px;
+}
+
+.list-button:hover{
+    cursor: pointer;
+}
+
+span{
+    color: white;
+}
+li{
+    list-style-type: none;
+    margin: 15px;
+}
